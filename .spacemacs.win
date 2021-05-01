@@ -601,18 +601,6 @@ layers configuration. You are free to put any user code."
         "OPEN"))))
 
 
-
-
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;
-  ;; org mode capture setup
-  ;;
-  ;; C-c c to capture.
-  ;;
-  (setq org-default-notes-file (expand-file-name "d:/HSS/Tresorit - Harmonic Software Systems Ltd/TODO.org"))
-
-
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;
   ;; enable org mode babel languages
@@ -760,7 +748,6 @@ layers configuration. You are free to put any user code."
  ;; If there is more than one, they won't work right.
  '(magit-diff-use-overlays nil)
  '(make-backup-files t)
- '(org-directory "C:/HSS")
  '(org2blog/wp-keep-new-lines t)
  '(show-trailing-whitespace nil)
  '(temporary-file-directory "c:/Home/backup/")
