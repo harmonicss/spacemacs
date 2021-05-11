@@ -297,6 +297,15 @@ in `dotspacemacs/user-config'."
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
 
+  ;; Emacs 27.2 has electric-indent-mode enabled by default, which is annoying and
+  ;; requires two deletes in org mode to start writing.
+  ;; this disbles it
+  ;;
+  ;;  https://www.reddit.com/r/orgmode/comments/n9pokq/two_orgmode_bugs_ive_noticed_in_new_emacs_272/
+  ;;
+  (add-hook 'org-mode-hook (lambda () (electric-indent-local-mode -1)))
+
+
   ;; Backups
   (setq backup-directory-alist `((".*" . ,temporary-file-directory)))
   (setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
