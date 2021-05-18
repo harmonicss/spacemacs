@@ -297,6 +297,12 @@ in `dotspacemacs/user-config'."
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
 
+  ;;
+  ;; disable stupid dots  in org-superstar-mode
+  ;;
+  (setq org-hide-leading-stars nil)
+  (setq org-superstar-leading-bullet ?\s)
+
   ;; Emacs 27.2 has electric-indent-mode enabled by default, which is annoying and
   ;; requires two deletes in org mode to start writing.
   ;; this disbles it
