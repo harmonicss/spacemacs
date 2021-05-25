@@ -411,6 +411,8 @@ layers configuration. You are free to put any user code."
   ;;
 
   ;; this has been replaced in > v0.200
+  (global-unset-key "\M-#")
+  (global-unset-key "\M-]")
   (global-set-key "\M-]" 'helm-gtags-find-tag-from-here)
   (global-set-key "\M-[" 'helm-gtags-pop-stack)
   (global-set-key "\M-#" 'helm-gtags-find-rtag)
@@ -421,10 +423,9 @@ layers configuration. You are free to put any user code."
     (define-key org-mode-map (kbd "M-[") 'org-mark-ring-goto))
 
   ;;keep find helm rtag
-  (global-unset-key "\M-#")
-  (global-set-key "\M-#" 'helm-gtags-find-rtag)
   (with-eval-after-load 'ggtags
-    (define-key ggtags-mode-map (kbd "\M-#") 'helm-gtags-find-tag-from-here))
+    (define-key ggtags-mode-map "\M-#" 'helm-gtags-find-rtag)
+    (define-key ggtags-mode-map "\M-]" 'helm-gtags-find-tag))
 
   ;; great for getting a list of function defined in a file
   (spacemacs/set-leader-keys "s i" 'helm-semantic-or-imenu)
