@@ -402,11 +402,11 @@ layers configuration. You are free to put any user code."
   (setenv "PATH"
           (concat
            "C:/cygwin64/bin;"
-           "C:/Program Files (x86)/glo652wb/bin;"
+           "C:/Program Files (x86)/glo665wb/bin;"
             (getenv "PATH")))
 
   ;; add W32 gnu global
-  (add-to-list 'exec-path "C:/Program Files (x86)/glo652wb/bin")
+  (add-to-list 'exec-path "C:/Program Files (x86)/glo665wb/bin")
 
   ;; same for diff, so adding here
   (add-to-list 'exec-path "C:/cygwin64/bin")
@@ -440,7 +440,7 @@ layers configuration. You are free to put any user code."
   ;;keep find helm rtag
   (with-eval-after-load 'ggtags
     (define-key ggtags-mode-map "\M-#" 'helm-gtags-find-rtag)
-    (define-key ggtags-mode-map "\M-]" 'helm-gtags-find-tag))
+    (define-key ggtags-mode-map "\M-]" 'helm-gtags-find-tag-from-here))
 
   ;; great for getting a list of function defined in a file
   (spacemacs/set-leader-keys "s i" 'helm-semantic-or-imenu)

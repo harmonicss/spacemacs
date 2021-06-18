@@ -425,7 +425,7 @@ layers configuration. You are free to put any user code."
   ;;keep find helm rtag
   (with-eval-after-load 'ggtags
     (define-key ggtags-mode-map "\M-#" 'helm-gtags-find-rtag)
-    (define-key ggtags-mode-map "\M-]" 'helm-gtags-find-tag))
+    (define-key ggtags-mode-map "\M-]" 'helm-gtags-find-tag-from-here))
 
   ;; great for getting a list of function defined in a file
   (spacemacs/set-leader-keys "s i" 'helm-semantic-or-imenu)
