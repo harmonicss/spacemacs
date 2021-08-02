@@ -298,6 +298,11 @@ This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
 
   ;;
+  ;; disable new scrollbar show whilst scrolling 'feature'
+  ;;
+  dotspacemacs-scroll-bar-while-scrolling nil
+
+  ;;
   ;; disable stupid dots  in org-superstar-mode
   ;;
   (setq org-hide-leading-stars nil)
