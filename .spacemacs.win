@@ -303,6 +303,30 @@ This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
 
   ;;
+  ;; practice lauterbach script mode
+  ;;
+  (defvar practice-mode-syntax-table nil "Syntax table for `practice-mode'.")
+
+  (setq practice-mode-syntax-table
+        (let ( (synTable (make-syntax-table)))
+          ;; C++ stye comments
+          (modify-syntax-entry ?\/ ". 12b" synTable)
+          (modify-syntax-entry ?\n "> b" synTable)
+          synTable))
+
+  (define-derived-mode practice-mode prog-mode "practice"
+    "major mode for editing practice scripts."
+    (setq font-lock-defaults (list nil))
+    (set-syntax-table practice-mode-syntax-table)
+    (setq-local comment-start "# ")
+    (setq-local comment-start ";; ")
+    (setq-local comment-end "")
+    )
+
+  (add-to-list 'auto-mode-alist '("\\.cmm$" . practice-mode))
+
+
+  ;;
   ;; disable stupid dots  in org-superstar-mode
   ;;
   (setq org-hide-leading-stars nil)
