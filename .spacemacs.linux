@@ -569,6 +569,12 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
   ;;
+  ;; Emacs 28 has persistent undo history, need to put them in the same place
+  ;;   https://www.reddit.com/r/emacs/comments/tejte0/undotree_bug_undotree_files_scattering_everywhere/
+  ;;
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+
+  ;;
   ;; practice lauterbach script mode
   ;;
   (defvar practice-mode-syntax-table nil "Syntax table for `practice-mode'.")
@@ -1021,14 +1027,15 @@ before packages are loaded."
        ;; offset customizations not in my-c-style
        (setq c-offsets-alist '((member-init-intro . ++)))
 
-       (c-add-style "personal" my-c-style t)
-       (c-add-style "wrs" wrs-c-style t)
 
        ;; Customizations for all modes in CC Mode.
        (defun my-c-mode-common-hook ()
          ;; add my personal style and set it for the current buffer
          ;; other customizations
-         (setq tab-width 8
+         (c-add-style "personal" my-c-style t)
+         (c-add-style "wrs" wrs-c-style t)
+
+         (setq tab-width 4
                ;; this will make sure spaces are used instead of tabs
                indent-tabs-mode nil)
          (setq show-trailing-whitespace nil)
@@ -1046,7 +1053,7 @@ before packages are loaded."
        ;;
        ;; set the default style
        ;;
-       (setq c-default-style "personal")
+       (setq c-default-style '((c-mode . "personal")))
 
        ;;
        ;; Insert some WR function headers
