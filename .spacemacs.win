@@ -48,7 +48,11 @@ This function should only modify configuration layer settings."
      ;; lsp
      ;; markdown
      multiple-cursors
-     org
+     (org :variables
+          org-enable-sticky-header t)
+     ;; dont think this works
+     ;; org2blog
+     python
      ranger
      semantic
      themes-megapack
@@ -414,7 +418,9 @@ It should only modify the values of Spacemacs settings."
    ;;   :size-limit-kb 1000)
    ;; When used in a plist, `visual' takes precedence over `relative'.
    ;; (default nil)
-   dotspacemacs-line-numbers nil
+   dotspacemacs-line-numbers '(:relative t
+                               :disabled-for-modes org-mode
+                                                   dired-mode)
 
    ;; Code folding method. Possible values are `evil', `origami' and `vimish'.
    ;; (default 'evil)
@@ -672,6 +678,7 @@ before packages are loaded."
   (spacemacs/set-leader-keys "fG" 'lgrep)
 
   ;; ahs-forward keybind has been removed since spacemacs 0.200
+  (global-auto-highlight-symbol-mode)
   (global-set-key (kbd "M-<left>") #'ahs-backward)
   (global-set-key (kbd "M-<right>") #'ahs-forward)
   (global-set-key (kbd "M-S-<left>") #'ahs-backward-definition)
@@ -1030,7 +1037,7 @@ before packages are loaded."
          ;;
          (c-set-style "personal")
 
-         (setq tab-width 8
+         (setq tab-width 4
                ;; this will make sure spaces are used instead of tabs
                indent-tabs-mode nil)
          (setq show-trailing-whitespace nil)
@@ -1088,5 +1095,8 @@ This function is called at the very end of Spacemacs initialization."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(ediff-current-diff-A ((t (:extend t :background "red" :foreground "white smoke"))))
+ '(ediff-current-diff-B ((t (:extend t :background "forest green" :foreground "white smoke"))))
+ '(ediff-fine-diff-A ((t (:background "yellow" :foreground "black"))))
+ '(ediff-fine-diff-B ((t (:background "yellow" :foreground "black")))))
 )
