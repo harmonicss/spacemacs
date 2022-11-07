@@ -569,6 +569,12 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
   ;;
+  ;; Emacs 28 has persistent undo history, need to put them in the same place
+  ;;   https://www.reddit.com/r/emacs/comments/tejte0/undotree_bug_undotree_files_scattering_everywhere/
+  ;;
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+
+  ;;
   ;; practice lauterbach script mode
   ;;
   (defvar practice-mode-syntax-table nil "Syntax table for `practice-mode'.")
