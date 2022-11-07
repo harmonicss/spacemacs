@@ -48,11 +48,17 @@ This function should only modify configuration layer settings."
      ;; better-defaults
      c-c++
      emacs-lisp
+     git
      gtags
      helm
      ;; lsp
      ;; markdown
-     org
+     multiple-cursors
+     (org :variables
+          org-enable-sticky-header t)
+     ;; dont think this works
+     ;; org2blog
+     python
      ranger
      semantic
      themes-megapack
@@ -1035,6 +1041,11 @@ before packages are loaded."
          (c-add-style "personal" my-c-style t)
          (c-add-style "wrs" wrs-c-style t)
 
+         ;;
+         ;; set the default style
+         ;;
+         (c-set-style "personal")
+
          (setq tab-width 4
                ;; this will make sure spaces are used instead of tabs
                indent-tabs-mode nil)
@@ -1049,11 +1060,6 @@ before packages are loaded."
          )
 
        (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
-
-       ;;
-       ;; set the default style
-       ;;
-       (setq c-default-style '((c-mode . "personal")))
 
        ;;
        ;; Insert some WR function headers
