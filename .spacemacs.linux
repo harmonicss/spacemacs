@@ -62,6 +62,7 @@ This function should only modify configuration layer settings."
      ranger
      semantic
      themes-megapack
+     syntax-checking ;; with flymake and gcc and clangd
      ;; just one or the other, not both
      ;;vxworks6
      ;;vxworks7
