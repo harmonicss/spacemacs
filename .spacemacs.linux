@@ -51,7 +51,7 @@ This function should only modify configuration layer settings."
      git
      gtags
      helm
-     ;; lsp
+     lsp
      ;; markdown
      multiple-cursors
      (org :variables
@@ -1036,6 +1036,9 @@ before packages are loaded."
        ;; offset customizations not in my-c-style
        (setq c-offsets-alist '((member-init-intro . ++)))
 
+       ;; enable lsp
+       (add-hook 'c-mode-hook 'lsp)
+       (add-hook 'c++-mode-hook 'lsp)
 
        ;; Customizations for all modes in CC Mode.
        (defun my-c-mode-common-hook ()
