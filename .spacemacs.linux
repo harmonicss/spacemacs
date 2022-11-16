@@ -45,6 +45,11 @@ This function should only modify configuration layer settings."
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      auto-completion
+     (auto-completion : variables
+                      auto-completion-enable-snippets-in-popup t
+                      auto-completion-idle-delay 0.0
+                      auto-completion-minimum-prefix-length 1)
+
      ;; better-defaults
      c-c++
      emacs-lisp
