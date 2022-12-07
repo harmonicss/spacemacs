@@ -53,9 +53,9 @@ This function should only modify configuration layer settings."
      c-c++
      emacs-lisp
      docker
-     gtags
      git
-     gtags
+     ;; gtags not working with rust, which can use lsp macros
+     (gtags :disabled-for rust)
      helm
      lsp
      ;; markdown
@@ -770,24 +770,34 @@ before packages are loaded."
   ;;
 
   ;; this has been replaced in > v0.200
-  (global-unset-key "\M-#")
-  (global-unset-key "\M-]")
-  (global-set-key "\M-]" 'helm-gtags-find-tag-from-here)
-  (global-set-key "\M-[" 'helm-gtags-pop-stack)
-  (global-set-key "\M-#" 'helm-gtags-find-rtag)
+  (global-unset-key "\M-]")   ;; doenst work, still bound to gtags-find-reference
+  (global-unset-key "\M-[")
+  (global-unset-key "\M-/")
+  ;;(global-set-key "\M-]" 'helm-gtags-find-tag-from-here)
+  ;;(global-set-key "\M-[" 'helm-gtags-pop-stack)
+  ;;(global-set-key "\M-/" 'helm-gtags-find-rtag)
 
   ;; for org mode, use the same key mappings as gtags, above
   (with-eval-after-load 'org
     (define-key org-mode-map (kbd "M-]") 'org-open-at-point)
     (define-key org-mode-map (kbd "M-[") 'org-mark-ring-goto))
 
-  ;;keep find helm rtag
+  ;; keep find helm rtag
   (with-eval-after-load 'ggtags
-    (define-key ggtags-mode-map "\M-#" 'helm-gtags-find-rtag)
-    (define-key ggtags-mode-map "\M-]" 'helm-gtags-find-tag-from-here))
+    (define-key ggtags-mode-map "\M-]" 'helm-gtags-find-tag-from-here)
+    (define-key ggtags-mode-map "\M-[" 'helm-gtags-pop-stack)
+    (define-key ggtags-mode-map "\M-/" 'helm-gtags-find-rtag))
+
+  ;; rust gtags equivalent. gtags needs to be disabled for rust, as above:
+  ;;   (gtags :disabled-for rust)
+  (with-eval-after-load 'lsp-mode
+    (define-key rust-mode-map "\M-]" 'lsp-find-definition)
+    (define-key rust-mode-map "\M-[" 'xref-go-back)
+    (define-key rust-mode-map "\M-/" 'lsp-find-references))
 
   ;; great for getting a list of function defined in a file
   (spacemacs/set-leader-keys "s i" 'helm-semantic-or-imenu)
+
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;
