@@ -568,6 +568,10 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  ;; 29.1
+  (setq org-startup-indented t)
+  (setq org-fontify-done-headline nil)
+
   (display-time-mode 1)
 
   ;;
@@ -810,7 +814,6 @@ before packages are loaded."
   ;; quite a lot of stuff here taken from http://doc.norang.ca/org-mode.html
   ;;
 
-  (require 'org-install)
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
   ;;(define-key global-map "\C-cl" 'org-store-link)
   ;;(define-key global-map "\C-ca" 'org-agenda)

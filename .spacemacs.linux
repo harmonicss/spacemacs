@@ -581,6 +581,10 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  ;; 29.1
+  (setq org-startup-indented t)
+  (setq org-fontify-done-headline nil)
+
   (display-time-mode 1)
 
   ;; LSP Rust Server setup rust-analyzer tool installed
