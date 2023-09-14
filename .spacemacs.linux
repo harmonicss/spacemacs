@@ -586,11 +586,13 @@ before packages are loaded."
   ;;
   (setq browse-url-browser-function 'browse-url-chrome)
 
+
   ;; 29.1
   (setq org-startup-indented t)
   (setq org-fontify-done-headline nil)
 
   (display-time-mode 1)
+
 
   ;; LSP Rust Server setup rust-analyzer tool installed
   ;;  https://develop.spacemacs.org/layers/+lang/rust/README.html
@@ -603,9 +605,16 @@ before packages are loaded."
            (getenv "PATH")))
   ;; doesnt work, try exec-path
   (add-to-list 'exec-path "~/.cargo/bin")
-  (setq-default dotspacemacs-configuration-layers
+  (add-to-list 'exec-path "~/miniconda3/bin")
+  (add-to-list 'exec-path "/usr/bin")
+  (add-to-list 'exec-path "/usr/local/bin")
+  (setq-default dotspacemas-configuration-layers
                 '(lsp :variables lsp-rust-server 'rust-analyzer
                                  cargo-process-reload-on-modify t))
+
+
+  ;; python rust server setup
+  (add-hook 'python-mode-hook 'lsp)
 
   ;;
   ;; Emacs 28 has persistent undo history, need to put them in the same place
@@ -799,7 +808,8 @@ before packages are loaded."
 
   ;; rust gtags equivalent. gtags needs to be disabled for rust, as above:
   ;;   (gtags :disabled-for rust)
-  (with-eval-after-load 'lsp-mode
+  ;;
+  (with-eval-after-load 'rust-mode
     (define-key rust-mode-map "\M-]" 'lsp-find-definition)
     (define-key rust-mode-map "\M-[" 'xref-go-back)
     (define-key rust-mode-map "\M-/" 'lsp-find-references))
@@ -925,6 +935,7 @@ before packages are loaded."
     (interactive)
     (insert "* ")
     (org-time-stamp-inactive))
+
 
   ;; lets use f1 for all org stuff, help is still C-h
   (global-unset-key [f1])
