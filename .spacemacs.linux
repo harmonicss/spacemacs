@@ -32,7 +32,9 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(rust
+   '(javascript
+     yaml
+     rust
      windows-scripts
      html
      csv
@@ -65,6 +67,7 @@ This function should only modify configuration layer settings."
      ;; dont think this works
      ;; org2blog
      python
+     conda
      ranger
      semantic
      themes-megapack
@@ -272,6 +275,8 @@ It should only modify the values of Spacemacs settings."
    ;; Default font or prioritized list of fonts. The `:size' can be specified as
    ;; a non-negative integer (pixel size), or a floating-point (point size).
    ;; Point size is recommended, because it's device independent. (default 10.0)
+   ;;
+   ;; "FiraCode Nerd Font" is now preferred, but needs to be installed seperately
    dotspacemacs-default-font '("Source Code Pro"
                                :size 10.0
                                :weight normal
@@ -581,6 +586,10 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  ;; conda modeline
+  (setq-default mode-line-format (cons '(:exec conda-env-current-name) mode-line-format))
+
+
   ;; SPC-0 treemacs is good. This will update it to update for the current buffer
   (treemacs-project-follow-mode)
 
@@ -597,27 +606,49 @@ before packages are loaded."
 
   (display-time-mode 1)
 
+  ;; old code removed and replaced with function to set
+  ;; eec-path, below.
+  ;;
+  ;; (setenv "PATH"
+  ;;         (concat
+  ;;          "/home/eliversi/.cargo/bin:"
+  ;;          "/home/eliversi/miniconda3/bin:"
+  ;;          (getenv "PATH")))
+
+  ;; doesnt work, try exec-path
+  ;; (add-to-list 'exec-path "~/.cargo/bin")
+  ;; (add-to-list 'exec-path "~/miniconda3/bin")
+  ;; (add-to-list 'exec-path "/usr/bin")
+  ;; (add-to-list 'exec-path "/usr/local/bin")
+
+  ;; having trouble with the path and conda / python versions
+  ;; this code should inherit exec-path from the path
+  (defun set-exec-path-from-shell-PATH ()
+    "Set up Emacs' `exec-path' and PATH environment variable to match
+that used by the user's shell.
+
+This is particularly useful under Mac OS X and macOS, where GUI
+apps are not started from a shell."
+    (interactive)
+    (let ((path-from-shell (replace-regexp-in-string
+			                "[ \t\n]*$" "" (shell-command-to-string
+					                        "$SHELL --login -c 'echo $PATH'"
+						                    ))))
+      (setenv "PATH" path-from-shell)
+      (setq exec-path (split-string path-from-shell path-separator))))
+
+  (set-exec-path-from-shell-PATH)
+
 
   ;; LSP Rust Server setup rust-analyzer tool installed
   ;;  https://develop.spacemacs.org/layers/+lang/rust/README.html
   ;;
-  ;; add cargo to path
-
-  (setenv "PATH"
-          (concat
-           "~/.cargo/bin;"
-           (getenv "PATH")))
-  ;; doesnt work, try exec-path
-  (add-to-list 'exec-path "~/.cargo/bin")
-  (add-to-list 'exec-path "~/miniconda3/bin")
-  (add-to-list 'exec-path "/usr/bin")
-  (add-to-list 'exec-path "/usr/local/bin")
   (setq-default dotspacemas-configuration-layers
                 '(lsp :variables lsp-rust-server 'rust-analyzer
                                  cargo-process-reload-on-modify t))
 
 
-  ;; python rust server setup
+  ;; python lsp server setup
   (add-hook 'python-mode-hook 'lsp)
 
   ;;
