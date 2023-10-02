@@ -57,7 +57,7 @@ This function should only modify configuration layer settings."
      docker
      git
      ;; gtags not working with rust, which can use lsp macros
-     (gtags :disabled-for rust)
+     (gtags :disabled-for rust python)
      helm
      lsp
      ;; markdown
@@ -436,7 +436,7 @@ It should only modify the values of Spacemacs settings."
    ;;   :size-limit-kb 1000)
    ;; When used in a plist, `visual' takes precedence over `relative'.
    ;; (default nil)
-   dotspacemacs-line-numbers '(:relative t
+   dotspacemacs-line-numbers '(:visual nil
                                :disabled-for-modes org-mode
                                                    dired-mode)
 
@@ -510,7 +510,7 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-icon-title-format nil
 
    ;; Show trailing whitespace (default t)
-   dotspacemacs-show-trailing-whitespace t
+   dotspacemacs-show-trailing-whitespace nil
 
    ;; Delete whitespace while saving buffer. Possible values are `all'
    ;; to aggressively delete empty line and long sequences of whitespace,
@@ -821,14 +821,18 @@ apps are not started from a shell."
   ;;
   ;; gtags src navigation
   ;;
-
-  ;; this has been replaced in > v0.200
-  (global-unset-key "\M-]")   ;; doenst work, still bound to gtags-find-reference
-  (global-unset-key "\M-[")
-  (global-unset-key "\M-/")
+  ;; remove global bindings in favor of mode specific settings
   ;;(global-set-key "\M-]" 'helm-gtags-find-tag-from-here)
   ;;(global-set-key "\M-[" 'helm-gtags-pop-stack)
   ;;(global-set-key "\M-/" 'helm-gtags-find-rtag)
+
+  ;; gtags disabled for python 
+  (with-eval-after-load 'python
+    ;;(define-key evil-normal-state-map (kbd "SPC m g s") 'helm-lsp-workspace-symbol)
+    (define-key python-mode-map (kbd "SPC m g s") 'helm-lsp-workspace-symbol)
+    (define-key python-mode-map (kbd "M-]") 'lsp-find-definition)
+    (define-key python-mode-map (kbd "M-[") 'xref-go-back)
+    (define-key python-mode-map (kbd "M-/") 'lsp-find-references))
 
   ;; for org mode, use the same key mappings as gtags, above
   (with-eval-after-load 'org
@@ -848,6 +852,12 @@ apps are not started from a shell."
     (define-key rust-mode-map "\M-]" 'lsp-find-definition)
     (define-key rust-mode-map "\M-[" 'xref-go-back)
     (define-key rust-mode-map "\M-/" 'lsp-find-references))
+
+  ;; use gtags for c-mode, but cc-mode seems to work 
+  (with-eval-after-load 'cc-mode
+    (define-key c-mode-map (kbd "M-]") 'helm-gtags-find-tag-from-here)
+    (define-key c-mode-map (kbd "M-[") 'helm-gtags-pop-stack)
+    (define-key c-mode-map (kbd "M-/") 'helm-gtags-find-rtag))
 
   ;; great for getting a list of function defined in a file
   (spacemacs/set-leader-keys "s i" 'helm-semantic-or-imenu)
