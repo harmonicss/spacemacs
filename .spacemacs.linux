@@ -828,8 +828,8 @@ apps are not started from a shell."
 
   ;; gtags disabled for python 
   (with-eval-after-load 'python
-    ;;(define-key evil-normal-state-map (kbd "SPC m g s") 'helm-lsp-workspace-symbol)
-    (define-key python-mode-map (kbd "SPC m g s") 'helm-lsp-workspace-symbol)
+    (define-key evil-normal-state-map (kbd "SPC m g s") 'helm-lsp-workspace-symbol)
+    ;;(define-key python-mode-map (kbd "SPC m g s") 'helm-lsp-workspace-symbol)
     (define-key python-mode-map (kbd "M-]") 'lsp-find-definition)
     (define-key python-mode-map (kbd "M-[") 'xref-go-back)
     (define-key python-mode-map (kbd "M-/") 'lsp-find-references))
