@@ -39,6 +39,10 @@ This function should only modify configuration layer settings."
      html
      csv
      graphviz
+     (plantuml :variables
+               plantuml-jar-path "~/.local/lib/plantuml-1.2023.12.jar"
+               org-plantuml-jar-path "~/.local/lib/plantuml-1.2023.12.jar"
+               plantuml-default-exec-mode 'library)
      markdown
      python
      ;; ----------------------------------------------------------------
@@ -1044,6 +1048,9 @@ apps are not started from a shell."
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((shell . t)
+     (dot . t)  ;; activate graphviz
+     (plantuml . t)
+     (emacs-lisp . t)
      ))
 
   ;;
