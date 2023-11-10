@@ -32,7 +32,8 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(javascript
+   '(helpful
+     javascript
      yaml
      rust
      windows-scripts
@@ -590,6 +591,9 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  ;; annoying terminal shift-tab and shift-right fix
+  (unbind-key (kbd "M-[]") org-mode-map)
+
   ;; conda modeline
   (setq-default mode-line-format (cons '(:exec conda-env-current-name) mode-line-format))
 
@@ -1052,6 +1056,9 @@ apps are not started from a shell."
      (plantuml . t)
      (emacs-lisp . t)
      ))
+
+  ;; just run the org 
+  (setq org-confirm-babel-evaluate nil)
 
   ;;
   ;; C-mode customisation
