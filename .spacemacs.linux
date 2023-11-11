@@ -592,7 +592,8 @@ Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
   ;; annoying terminal shift-tab and shift-right fix
-  (unbind-key (kbd "M-[]") org-mode-map)
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "M-[") nil))
 
   ;; conda modeline
   (setq-default mode-line-format (cons '(:exec conda-env-current-name) mode-line-format))
