@@ -52,6 +52,7 @@ This function should only modify configuration layer settings."
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      (auto-completion :variables
+                      auto-completion-enable-help-tooltip t
                       auto-completion-enable-snippets-in-popup t
                       auto-completion-idle-delay 0.0
                       auto-completion-minimum-prefix-length 1)
@@ -63,12 +64,16 @@ This function should only modify configuration layer settings."
      git
      ;; gtags not working with rust, which can use lsp macros
      (gtags :disabled-for rust python)
-     helm
+     ;; helm - ed : helm has issues when searching an org file,
+     ;; trying ivy as an alternative
+     ivy
      lsp
      ;; markdown
      multiple-cursors
      (org :variables
-          org-enable-sticky-header t)
+          org-enable-sticky-header t
+          org-enable-roam-support t
+          org-enable-roam-ui t)
      ;; dont think this works
      ;; org2blog
      python
@@ -84,7 +89,7 @@ This function should only modify configuration layer settings."
      (shell :variables
              shell-default-height 30
              shell-default-position 'bottom)
-     ;; spell-checking
+     spell-checking
      ;; syntax-checking
      ;; version-control
      treemacs)
@@ -98,7 +103,9 @@ This function should only modify configuration layer settings."
    ;; `dotspacemacs/user-config'. To use a local version of a package, use the
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(
+   beacon
+   )
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -591,9 +598,13 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
-  ;; annoying terminal shift-tab and shift-right fix
-  (with-eval-after-load 'org
-    (define-key org-mode-map (kbd "M-[") nil))
+  ;; beacon mode is a highter for the cursor position
+  (beacon-mode 1)
+
+  ;; org-roam
+  (setq org-roam-directory "~/org-roam")
+  (setq org-roam-db-update-method 'immediate)
+  (org-roam-db-autosync-mode)
 
   ;; conda modeline
   (setq-default mode-line-format (cons '(:exec conda-env-current-name) mode-line-format))
@@ -769,7 +780,7 @@ apps are not started from a shell."
 
   ;; get rid of the annoying grey space boxes
   ;; ED: doesnt seem to make a difference
-  (setq-local show-trailing-whitespace nil)
+  ;;(setq-local show-trailing-whitespace nil)
 
 
   ;; try a local grep maps to SPC f G
@@ -844,9 +855,11 @@ apps are not started from a shell."
     (define-key python-mode-map (kbd "M-/") 'lsp-find-references))
 
   ;; for org mode, use the same key mappings as gtags, above
-  (with-eval-after-load 'org
-    (define-key org-mode-map (kbd "M-]") 'org-open-at-point)
-    (define-key org-mode-map (kbd "M-[") 'org-mark-ring-goto))
+  ;; disable for terminal mode, as the M-[ is also a terminal string
+  (when (display-graphic-p)
+    (with-eval-after-load 'org
+      (define-key org-mode-map (kbd "M-]") 'org-open-at-point)
+      (define-key org-mode-map (kbd "M-[") 'org-mark-ring-goto)))
 
   ;; keep find helm rtag
   (with-eval-after-load 'ggtags
@@ -1165,7 +1178,7 @@ apps are not started from a shell."
          (setq tab-width 4
                ;; this will make sure spaces are used instead of tabs
                indent-tabs-mode nil)
-         (setq show-trailing-whitespace nil)
+         ;;(setq show-trailing-whitespace nil)
          ;; we like auto-newline and hungry-delete
          ;; Ed: I bloody hate it!
          ;;(c-toggle-auto-hungry-state 0)
