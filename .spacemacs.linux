@@ -66,7 +66,9 @@ This function should only modify configuration layer settings."
      (gtags :disabled-for rust python)
      ;; helm - ed : helm has issues when searching an org file,
      ;; trying ivy as an alternative
-     ivy
+     (ivy :variables
+          ivy-enable-advanced-buffer-information t
+          ivy-enable-icons t)
      lsp
      ;; markdown
      multiple-cursors
