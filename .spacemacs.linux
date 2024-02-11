@@ -53,9 +53,12 @@ This function should only modify configuration layer settings."
      ;; ----------------------------------------------------------------
      (auto-completion :variables
                       auto-completion-enable-help-tooltip t
+                      auto-completion-enable-sort-by-usage t
                       auto-completion-enable-snippets-in-popup t
                       auto-completion-idle-delay 0.0
-                      auto-completion-minimum-prefix-length 1)
+                      auto-completion-minimum-prefix-length 1
+                      :config
+                      add-to-list 'company-backends '(company-yasnippet company-capf company-anaconda))
 
      ;; better-defaults
      c-c++
@@ -668,8 +671,11 @@ apps are not started from a shell."
   ;;  https://develop.spacemacs.org/layers/+lang/rust/README.html
   ;;
   (setq-default dotspacemas-configuration-layers
-                '(lsp :variables lsp-rust-server 'rust-analyzer
-                                 cargo-process-reload-on-modify t))
+                '(lsp :variables
+                      lsp-rust-server 'rust-analyzer
+                      lsp-ui-imenu-auto-refresh-delay 0.1
+                      lsp-ui-imenu-auto-refresh t
+                      cargo-process-reload-on-modify t))
 
 
   ;; python lsp server setup
