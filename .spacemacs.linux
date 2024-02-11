@@ -32,7 +32,10 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(helpful
+   '(openai
+     latex
+     helpful
+     colors
      javascript
      yaml
      rust
@@ -66,11 +69,12 @@ This function should only modify configuration layer settings."
      docker
      git
      ;; gtags not working with rust, which can use lsp macros
-     (gtags :disabled-for rust python)
+     (gtags :disabled-for rust python elisp elixir)
      ;; helm - ed : helm has issues when searching an org file,
      ;; trying ivy as an alternative
      (ivy :variables
           ivy-enable-advanced-buffer-information t
+          ivy-count-format "(%d/%d) "
           ivy-enable-icons t)
      lsp
      ;; markdown
@@ -109,7 +113,9 @@ This function should only modify configuration layer settings."
    ;; `:location' property: '(your-package :location "~/path/to/your-package/")
    ;; Also include the dependencies as they will not be resolved automatically.
    dotspacemacs-additional-packages '(
-   beacon
+     gptel
+     beacon
+     org2blog
    )
 
    ;; A list of packages that cannot be updated.
@@ -239,8 +245,9 @@ It should only modify the values of Spacemacs settings."
    ;; pair of numbers, e.g. `(recents-by-project . (7 .  5))', where the first
    ;; number is the project limit and the second the limit on the recent files
    ;; within a project.
-   dotspacemacs-startup-lists '((recents . 5)
-                                (projects . 7))
+   dotspacemacs-startup-lists '((recents . 7)
+                                (projects . 3)
+                                (bookmarks . 5))
 
    ;; True if the home buffer should respond to resize events. (default t)
    dotspacemacs-startup-buffer-responsive t
@@ -605,8 +612,21 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  ;; Remove compile buffer when done
+  ;; https://www.youtube.com/watch?v=V6ceL-KdIeQ
+  (add-hook 'compilation-finish-functions
+            (lambda (buf str)
+              (if (null (string-match ".*exited abnormally.*" str))
+                  ;; no errors, make a compilation window go away in a few seconds
+                  (progn
+                    (run-at-time
+                     "2 sec" nil 'delete-windows-on
+                     (get-buffer-create "*compilation*"))
+                    (message "No Compilation Errors!")))))
+
   ;; beacon mode is a highter for the cursor position
-  (beacon-mode 1)
+  ;; causes hang with LSP document popup
+  ;;(beacon-mode 1)
 
   ;; org-roam
   (setq org-roam-directory "~/org-roam")
@@ -1079,6 +1099,7 @@ apps are not started from a shell."
      (dot . t)  ;; activate graphviz
      (plantuml . t)
      (emacs-lisp . t)
+     (latex . t)
      ))
 
   ;; just run the org 
