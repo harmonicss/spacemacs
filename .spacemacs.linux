@@ -624,6 +624,12 @@ before packages are loaded."
                      (get-buffer-create "*compilation*"))
                     (message "No Compilation Errors!")))))
 
+  ;; gptel - working gpt
+  (require 'gptel)
+  (setq gptel-api-key "")
+  (setq gptel-model "gpt-4")
+  (setq gptel-default-mode 'org-mode)
+
   ;; beacon mode is a highter for the cursor position
   ;; causes hang with LSP document popup
   ;;(beacon-mode 1)
