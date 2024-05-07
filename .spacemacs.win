@@ -38,24 +38,44 @@ This function should only modify configuration layer settings."
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     auto-completion
+     (auto-completion :variables
+                      auto-completion-enable-help-tooltip t
+                      auto-completion-enable-sort-by-usage t
+                      auto-completion-enable-snippets-in-popup t
+                      auto-completion-idle-delay 0.0
+                      auto-completion-minimum-prefix-length 1
+                      :config
+                      add-to-list 'company-backends '(company-yasnippet company-capf company-anaconda))
+
      ;; better-defaults
      c-c++
      emacs-lisp
+     docker
      git
-     gtags
-     helm
+     ;; gtags not working with rust, which can use lsp macros
+     ;; disabling using lsp instead for all code
+     (gtags :disabled-for rust python elisp elixir)
+
+     ;; helm - ed : helm has issues when searching an org file,
+     ;; trying ivy as an alternative
+     (ivy :variables
+          ivy-enable-advanced-buffer-information t
+          ivy-count-format "(%d/%d) "
+          ivy-enable-icons t)
      ;; lsp
      ;; markdown
      multiple-cursors
      (org :variables
-          org-enable-sticky-header t)
+          org-enable-sticky-header t
+          org-enable-roam-support t
+          org-enable-roam-ui t)
      ;; dont think this works
      ;; org2blog
      python
      ranger
      semantic
      themes-megapack
+     syntax-checking ;; with flymake and gcc and clangd
      ;; just one or the other, not both
      ;;vxworks6
      ;;vxworks7
@@ -83,7 +103,9 @@ This function should only modify configuration layer settings."
    dotspacemacs-frozen-packages '()
 
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(
+       ;; prevent the awful drag and drop for org mode
+       org-download)
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -204,8 +226,9 @@ It should only modify the values of Spacemacs settings."
    ;; pair of numbers, e.g. `(recents-by-project . (7 .  5))', where the first
    ;; number is the project limit and the second the limit on the recent files
    ;; within a project.
-   dotspacemacs-startup-lists '((recents . 5)
-                                (projects . 7))
+   dotspacemacs-startup-lists '((recents . 7)
+                                (projects . 3)
+                                (bookmarks . 5))
 
    ;; True if the home buffer should respond to resize events. (default t)
    dotspacemacs-startup-buffer-responsive t
@@ -418,7 +441,7 @@ It should only modify the values of Spacemacs settings."
    ;;   :size-limit-kb 1000)
    ;; When used in a plist, `visual' takes precedence over `relative'.
    ;; (default nil)
-   dotspacemacs-line-numbers '(:relative t
+   dotspacemacs-line-numbers '(:relative true
                                :disabled-for-modes org-mode
                                                    dired-mode)
 
@@ -492,7 +515,7 @@ It should only modify the values of Spacemacs settings."
    dotspacemacs-icon-title-format nil
 
    ;; Show trailing whitespace (default t)
-   dotspacemacs-show-trailing-whitespace t
+   dotspacemacs-show-trailing-whitespace nil
 
    ;; Delete whitespace while saving buffer. Possible values are `all'
    ;; to aggressively delete empty line and long sequences of whitespace,
@@ -568,11 +591,54 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  (setq magit-show-long-lines-warning nil)
+
+  ;; lets get yasnippet working
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+
+  ;; try this, smooth for images
+  (pixel-scroll-precision-mode)
+
+  ;; try this, always update if the file changes
+  ;; does this work on samba?
+  (global-auto-revert-mode t)
+
+  ;; this sets up the tag display on ivy for org-roam link search
+  (setq org-roam-node-display-template
+        (concat "${title:*} "
+                (propertize "${tags:10}" 'face 'org-tag)))
+
+  ;; org backlists is messed up on spacemacs
+  ;; https://github.com/org-roam/org-roam/issues/1732
+  ;; https://github.com/org-roam/org-roam/issues/1772 
+  (advice-add #'org-roam-fontify-like-in-org-mode :around (lambda (fn &rest args) (save-excursion (apply fn args))))
+
+  ;; SPC-0 treemacs is good. This will update it to update for the current buffer
+  (treemacs-project-follow-mode)
+
   ;; 29.1
   (setq org-startup-indented t)
   (setq org-fontify-done-headline nil)
 
   (display-time-mode 1)
+
+  ;; having trouble with the path and conda / python versions
+  ;; this code should inherit exec-path from the path
+  (defun set-exec-path-from-shell-PATH ()
+    "Set up Emacs' `exec-path' and PATH environment variable to match
+that used by the user's shell.
+
+This is particularly useful under Mac OS X and macOS, where GUI
+apps are not started from a shell."
+    (interactive)
+    (let ((path-from-shell (replace-regexp-in-string
+			                "[ \t\n]*$" "" (shell-command-to-string
+					                        "$SHELL --login -c 'echo $PATH'"
+						                    ))))
+      (setenv "PATH" path-from-shell)
+      (setq exec-path (split-string path-from-shell path-separator))))
+
+  (set-exec-path-from-shell-PATH)
 
   ;;
   ;; Emacs 28 has persistent undo history, need to put them in the same place
@@ -683,7 +749,7 @@ before packages are loaded."
 
   ;; get rid of the annoying grey space boxes
   ;; ED: doesnt seem to make a difference
-  (setq-local show-trailing-whitespace nil)
+  ;;(setq-local show-trailing-whitespace nil)
 
 
   ;; try a local grep maps to SPC f G
@@ -747,26 +813,67 @@ before packages are loaded."
   ;;
   ;; gtags src navigation
   ;;
+  ;; remove global bindings in favor of mode specific settings
+  ;;(global-set-key "\M-]" 'helm-gtags-find-tag-from-here)
+  ;;(global-set-key "\M-[" 'helm-gtags-pop-stack)
+  ;;(global-set-key "\M-/" 'helm-gtags-find-rtag)
 
-  ;; this has been replaced in > v0.200
-  (global-unset-key "\M-#")
-  (global-unset-key "\M-]")
-  (global-set-key "\M-]" 'helm-gtags-find-tag-from-here)
-  (global-set-key "\M-[" 'helm-gtags-pop-stack)
-  (global-set-key "\M-#" 'helm-gtags-find-rtag)
+  ;; gtags disabled for python 
+  (with-eval-after-load 'python
+    (define-key evil-normal-state-map (kbd "SPC m g s") 'helm-lsp-workspace-symbol)
+    ;;(define-key python-mode-map (kbd "SPC m g s") 'helm-lsp-workspace-symbol)
+    (define-key python-mode-map (kbd "M-]") 'lsp-find-definition)
+    (define-key python-mode-map (kbd "M-[") 'xref-go-back)
+    (define-key python-mode-map (kbd "M-/") 'lsp-find-references))
 
   ;; for org mode, use the same key mappings as gtags, above
   (with-eval-after-load 'org
     (define-key org-mode-map (kbd "M-]") 'org-open-at-point)
     (define-key org-mode-map (kbd "M-[") 'org-mark-ring-goto))
 
-  ;;keep find helm rtag
+  ;; keep find helm rtag
   (with-eval-after-load 'ggtags
-    (define-key ggtags-mode-map "\M-#" 'helm-gtags-find-rtag)
-    (define-key ggtags-mode-map "\M-]" 'helm-gtags-find-tag-from-here))
+    (define-key ggtags-mode-map "\M-]" 'counsel-gtags-find-definition)
+    (define-key ggtags-mode-map "\M-[" 'counsel-gtags-go-backward)
+    (define-key ggtags-mode-map "\M-/" 'counsel-gtags-find-reference))
+
+  ;; rust gtags equivalent. gtags needs to be disabled for rust, as above:
+  ;;   (gtags :disabled-for rust)
+  ;;
+  (with-eval-after-load 'rust-mode
+    (define-key rust-mode-map "\M-]" 'lsp-find-definition)
+    (define-key rust-mode-map "\M-[" 'xref-go-back)
+    (define-key rust-mode-map "\M-/" 'lsp-find-references))
+
+  ;; and elixir
+  (with-eval-after-load 'elixir-mode
+    ;; eglot a replacement for lsp, so enable manually for now
+    ;; error on elixir-ts-mode
+    ;; (eglot)
+    ;; (add-to-list 'eglot-server-programs '(elixir-ts-mode "language_server.sh"))
+    (define-key elixir-mode-map "\M-]" 'xref-find-definition)
+    (define-key elixir-mode-map "\M-[" 'xref-go-back)
+    (define-key elixir-mode-map "\M-/" 'xref-find-references))
+
+  ;; use gtags for c-mode, but cc-mode seems to work 
+  (with-eval-after-load 'cc-mode
+    (define-key c-mode-map (kbd "M-]") 'xref-find-definition)
+      (define-key c-mode-map (kbd "M-[") 'xref-go-back)
+      (define-key c-mode-map (kbd "M-/") 'xref-find-references))
+
+    ;; (define-key c-mode-map (kbd "M-]") 'helm-gtags-find-tag-from-here)
+    ;;   (define-key c-mode-map (kbd "M-[") 'helm-gtags-pop-stack)
+    ;;   (define-key c-mode-map (kbd "M-/") 'helm-gtags-find-rtag))
+
+  ;; trying lsp/clangd not working seems to need compile_commands.json
+    ;; (define-key c-mode-map (kbd "M-]") 'lsp-find-definition)
+    ;; (define-key c-mode-map (kbd "M-[") 'xref-go-back)
+    ;; (define-key c-mode-map (kbd "M-/") 'lsp-find-references))
+
 
   ;; great for getting a list of function defined in a file
   (spacemacs/set-leader-keys "s i" 'helm-semantic-or-imenu)
+
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;
@@ -885,6 +992,7 @@ before packages are loaded."
     (interactive)
     (insert "* ")
     (org-time-stamp-inactive))
+
 
   ;; lets use f1 for all org stuff, help is still C-h
   (global-unset-key [f1])
@@ -1051,7 +1159,7 @@ before packages are loaded."
          (setq tab-width 4
                ;; this will make sure spaces are used instead of tabs
                indent-tabs-mode nil)
-         (setq show-trailing-whitespace nil)
+         ;;(setq show-trailing-whitespace nil)
          ;; we like auto-newline and hungry-delete
          ;; Ed: I bloody hate it!
          ;;(c-toggle-auto-hungry-state 0)
