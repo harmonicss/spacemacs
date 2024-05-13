@@ -33,6 +33,8 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(openai
+     (elixir :variables elixir-backend 'eglot
+                        elixir-ls-path "~/github/elixir-ls-v0.19.0")
      latex
      helpful
      colors
@@ -707,6 +709,14 @@ apps are not started from a shell."
   ;; python lsp server setup
   (add-hook 'python-mode-hook 'lsp)
 
+  ;; ed - try lsp with C
+  (add-hook 'c-mode-hook 'lsp)
+  (add-hook 'c++-mode-hook 'lsp)
+
+  ;; elixir eglot server setup
+  ;; eglot server doesnt come up atm
+  (add-hook 'elixir-mode-hook 'eglot-ensure)
+
   ;;
   ;; Emacs 28 has persistent undo history, need to put them in the same place
   ;;   https://www.reddit.com/r/emacs/comments/tejte0/undotree_bug_undotree_files_scattering_everywhere/
@@ -899,9 +909,9 @@ apps are not started from a shell."
 
   ;; keep find helm rtag
   (with-eval-after-load 'ggtags
-    (define-key ggtags-mode-map "\M-]" 'helm-gtags-find-tag-from-here)
-    (define-key ggtags-mode-map "\M-[" 'helm-gtags-pop-stack)
-    (define-key ggtags-mode-map "\M-/" 'helm-gtags-find-rtag))
+    (define-key ggtags-mode-map "\M-]" 'counsel-gtags-find-definition)
+    (define-key ggtags-mode-map "\M-[" 'counsel-gtags-go-backward)
+    (define-key ggtags-mode-map "\M-/" 'counsel-gtags-find-reference))
 
   ;; rust gtags equivalent. gtags needs to be disabled for rust, as above:
   ;;   (gtags :disabled-for rust)
@@ -911,11 +921,22 @@ apps are not started from a shell."
     (define-key rust-mode-map "\M-[" 'xref-go-back)
     (define-key rust-mode-map "\M-/" 'lsp-find-references))
 
+  ;; and elixir
+  (with-eval-after-load 'elixir-mode
+    ;; eglot a replacement for lsp, so enable manually for now
+    ;; error on elixir-ts-mode
+    ;; (eglot)
+    ;; (add-to-list 'eglot-server-programs '(elixir-ts-mode "language_server.sh"))
+    (define-key elixir-mode-map "\M-]" 'xref-find-definition)
+    (define-key elixir-mode-map "\M-[" 'xref-go-back)
+    (define-key elixir-mode-map "\M-/" 'xref-find-references))
+
   ;; use gtags for c-mode, but cc-mode seems to work 
   (with-eval-after-load 'cc-mode
-    (define-key c-mode-map (kbd "M-]") 'helm-gtags-find-tag-from-here)
-    (define-key c-mode-map (kbd "M-[") 'helm-gtags-pop-stack)
-    (define-key c-mode-map (kbd "M-/") 'helm-gtags-find-rtag))
+    (define-key c-mode-map (kbd "M-]") 'xref-find-definition)
+      (define-key c-mode-map (kbd "M-[") 'xref-go-back)
+      (define-key c-mode-map (kbd "M-/") 'xref-find-references))
+
 
   ;; great for getting a list of function defined in a file
   (spacemacs/set-leader-keys "s i" 'helm-semantic-or-imenu)
