@@ -33,7 +33,7 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(openai
-     (elixir :variables elixir-backend 'eglot
+     (elixir :variables elixir-backend 'alchemist
                         elixir-ls-path "~/github/elixir-ls-v0.19.0")
      latex
      helpful
