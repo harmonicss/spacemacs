@@ -33,8 +33,11 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(openai
-     (elixir :variables elixir-backend 'alchemist
-                        elixir-ls-path "~/github/elixir-ls-v0.19.0")
+     tree-sitter
+     (elixir :variables elixir-backend 'lsp
+             elixir-ls-path "~/github/elixir-ls")
+
+                   
      latex
      helpful
      colors
@@ -72,6 +75,7 @@ This function should only modify configuration layer settings."
      git
      ;; gtags not working with rust, which can use lsp macros
      (gtags :disabled-for rust python elisp elixir)
+
      ;; helm - ed : helm has issues when searching an org file,
      ;; trying ivy as an alternative
      (ivy :variables
@@ -614,6 +618,26 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  (setq magit-show-long-lines-warning nil)
+
+  ;; Let the desktop background show through
+  ;; needs picom -f or -b
+  ;; (set-frame-parameter (selected-frame) 'alpha '(97 . 100))
+  ;; (add-to-list 'default-frame-alist '(alpha . (90 . 70)))
+
+
+  ;; treesitter language files
+  (setq treesit-language-source-alist
+       '((heex "https://github.com/phoenixframework/tree-sitter-heex")
+         (bash "https://github.com/tree-sitter/tree-sitter-bash")
+         (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+         (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+         (elixir "https://github.com/elixir-lang/tree-sitter-elixir")))
+
+  ;; having trouble with ts-mode
+  ;; (setq major-mode-remap-alist
+  ;;       '((elixir-mode . elixir-ts-mode)))
+
   ;; Remove compile buffer when done
   ;; https://www.youtube.com/watch?v=V6ceL-KdIeQ
   (add-hook 'compilation-finish-functions
@@ -631,6 +655,29 @@ before packages are loaded."
   (setq gptel-api-key "")
   (setq gptel-model "gpt-4")
   (setq gptel-default-mode 'org-mode)
+
+  ;; taskjuggler exports
+  (require 'ox-taskjuggler)
+
+  ;; lets get yasnippet working
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+
+  ;; try this, smooth for images
+  (pixel-scroll-precision-mode)
+
+  ;; try this, always update if the file changes
+  ;; does this work on samba?
+  (global-auto-revert-mode t)
+
+  ;; this sets up the tag display on ivy for org-roam link search
+  (setq org-roam-node-display-template
+        (concat "${title:*} "
+                (propertize "${tags:10}" 'face 'org-tag)))
+
+  ;; org backlists is messed up on spacemacs
+  ;; https://github.com/org-roam/org-roam/issues/1732
+  ;; https://github.com/org-roam/org-roam/issues/1772 
+  (advice-add #'org-roam-fontify-like-in-org-mode :around (lambda (fn &rest args) (save-excursion (apply fn args))))
 
   ;; beacon mode is a highter for the cursor position
   ;; causes hang with LSP document popup
@@ -927,9 +974,9 @@ apps are not started from a shell."
     ;; error on elixir-ts-mode
     ;; (eglot)
     ;; (add-to-list 'eglot-server-programs '(elixir-ts-mode "language_server.sh"))
-    (define-key elixir-mode-map "\M-]" 'xref-find-definition)
+    (define-key elixir-mode-map "\M-]" 'lsp-find-definition)
     (define-key elixir-mode-map "\M-[" 'xref-go-back)
-    (define-key elixir-mode-map "\M-/" 'xref-find-references))
+    (define-key elixir-mode-map "\M-/" 'lsp-find-references))
 
   ;; use gtags for c-mode, but cc-mode seems to work 
   (with-eval-after-load 'cc-mode
