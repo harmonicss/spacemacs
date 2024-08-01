@@ -92,7 +92,7 @@ This function should only modify configuration layer settings."
      ;; dont think this works
      ;; org2blog
      python
-     conda
+     ;;conda // take out as lsp tries to call some conda init
      ranger
      semantic
      themes-megapack
@@ -618,6 +618,28 @@ configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
 
+  ;; Syntax highlighting for embedded HTML within Elixir
+  ;; Install mmm-mode if not already
+  (require 'mmm-mode)
+  (setq mmm-global-mode 'maybe)
+  (setq mmm-submode-decoration-level 2)
+
+  ;; Define a class for HTML within Elixir
+  (mmm-add-classes
+   '((elixir-html
+      :submode web-mode
+      :face mmm-code-submode-face
+      :front "~H\"\"\""
+      :back "\"\"\""
+      :insert ((?e elixir-embed "HTML")
+               (front "~H\"\"\"")
+               (back  "\"\"\"")
+               (save-buffer)))))
+
+  ;; Apply the class to Elixir files
+  (mmm-add-mode-ext-class 'elixir-mode "\\.ex\\'" 'elixir-html)
+
+
   (setq magit-show-long-lines-warning nil)
 
   ;; Let the desktop background show through
@@ -689,7 +711,7 @@ before packages are loaded."
   (org-roam-db-autosync-mode)
 
   ;; conda modeline
-  (setq-default mode-line-format (cons '(:exec conda-env-current-name) mode-line-format))
+  ;; (setq-default mode-line-format (cons '(:exec conda-env-current-name) mode-line-format))
 
 
   ;; SPC-0 treemacs is good. This will update it to update for the current buffer
@@ -736,8 +758,14 @@ apps are not started from a shell."
 			                "[ \t\n]*$" "" (shell-command-to-string
 					                        "$SHELL --login -c 'echo $PATH'"
 						                    ))))
-      (setenv "PATH" path-from-shell)
-      (setq exec-path (split-string path-from-shell path-separator))))
+
+      ;; need to reorder to find correct elixir, unsure why but the path order gets changed
+      (setq reordered-path
+            (concat
+             "/home/eliversi/.asdf/shims:"
+             (remove "/home/eliversi/.asdf/shims" path-from-shell)))
+      (setenv "PATH" reordered-path)
+      (setq exec-path (split-string reordered-path path-separator))))
 
   (set-exec-path-from-shell-PATH)
 
@@ -762,7 +790,7 @@ apps are not started from a shell."
 
   ;; elixir eglot server setup
   ;; eglot server doesnt come up atm
-  (add-hook 'elixir-mode-hook 'eglot-ensure)
+  ;; (add-hook 'elixir-mode-hook 'eglot-ensure)
 
   ;;
   ;; Emacs 28 has persistent undo history, need to put them in the same place
@@ -1331,6 +1359,7 @@ This function is called at the very end of Spacemacs initialization."
      (awk-mode . "awk")
      (other . "gnu")))
  '(evil-want-Y-yank-to-eol nil)
+ '(magit-log-margin '(t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
  '(make-backup-files t)
  '(org2blog/wp-keep-new-lines t)
  '(package-selected-packages
@@ -1348,5 +1377,8 @@ This function is called at the very end of Spacemacs initialization."
  '(ediff-current-diff-A ((t (:extend t :background "red" :foreground "white smoke"))))
  '(ediff-current-diff-B ((t (:extend t :background "forest green" :foreground "white smoke"))))
  '(ediff-fine-diff-A ((t (:background "yellow" :foreground "black"))))
- '(ediff-fine-diff-B ((t (:background "yellow" :foreground "black")))))
+ '(ediff-fine-diff-B ((t (:background "yellow" :foreground "black"))))
+ '(gnus-header-from ((t (:inherit message-header-other :foreground "#f99157" :weight bold))))
+ '(mmm-code-submode-face ((t (:background "#333333"))))
+ '(org-headline-done ((t nil))))
 )
