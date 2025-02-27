@@ -88,6 +88,8 @@ setopt NULL_GLOB
 # stop ksshaskpass for running (interferes with github keys)
 unset SSH_ASKPASS
 
+export TERM=xterm-256color
+
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
@@ -114,3 +116,9 @@ unset SSH_ASKPASS
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+export EDITOR='vim'
+
+export PATH="$HOME/.tmux/plugins/tmuxifier/bin:$PATH"
+eval "$(tmuxifier init -)"
+
